@@ -1,0 +1,95 @@
+<html>
+<head>
+<style>
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    background-color: white;
+    color: #212121;
+    font-size: 13px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    border-bottom: 1px solid #eee;
+}
+
+a {
+    color: #212121;
+    text-decoration: none;
+    display: block;
+    padding: 1em;
+    border-left: 6px solid #f8f8f8;
+}
+
+a:hover {
+    border-left-color: #039be5;
+    padding-left: 1em;
+}
+
+.search-container {
+    padding: 1em;
+    background-color: #f8f8f8;
+}
+
+input {
+    width: 100%;
+    height: 2em;
+    padding: 0 1em;
+    border: none;
+}
+
+</style>
+</head>
+<body>
+    <div id='classes'>
+        <div class='search-container'>
+            <input class="search" placeholder="Search" />
+        </div>
+        <ul id='list' class='list'></ul>
+    </div>
+</body>
+<script src="list.min.js"></script>
+<script src="values.js"></script>
+<script>
+
+function fillList() {
+    var listElm = document.getElementById('list');
+    values.map(function(item) {
+        var li = document.createElement('li');
+        listElm.appendChild(li);
+
+        var a = document.createElement('a');
+        a.setAttribute('href', item.path);
+        li.appendChild(a);
+
+        var title = document.createElement('h3');
+        a.appendChild(title);
+        title.setAttribute('class', 'name');
+        title.innerHTML = item.name;
+
+        var text = document.createElement('p');
+        a.appendChild(text);
+        text.innerHTML = item.path;
+    });
+}
+
+function initListJS() {
+    var options = {
+        valueNames: ['name']
+    };
+
+    var classList = new List('classes', options);
+}
+
+fillList();
+initListJS();
+</script>
+</html>
