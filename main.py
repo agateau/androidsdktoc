@@ -15,6 +15,9 @@ BLACKLISTED_DIRS = ('internal', 'test')
 
 
 def find_doc_items(doc_dir):
+    """
+    Generate a list of dicts with keys `name` and `path`
+    """
     for root, dirs, filenames in os.walk(doc_dir):
         for blacklisted_dir in BLACKLISTED_DIRS:
             try:
@@ -34,6 +37,9 @@ def copy_static_files(assets_dir, output_dir):
 
 
 def generate_values_js(fp, doc_items):
+    """
+    Generate the .js file used by list.min.js
+    """
     lst = list(doc_items)
     lst.sort(key=lambda x: x['name'])
 
