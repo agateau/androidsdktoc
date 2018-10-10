@@ -14,7 +14,7 @@ Generates a searchable table of content for the Android SDK documentation.
 BLACKLISTED_DIRS = ('internal', 'test')
 
 
-def walk_doc(doc_dir):
+def find_doc_items(doc_dir):
     for root, dirs, filenames in os.walk(doc_dir):
         for blacklisted_dir in BLACKLISTED_DIRS:
             try:
@@ -28,6 +28,20 @@ def walk_doc(doc_dir):
                 yield dict(name=class_name, path=file_path)
 
 
+def copy_static_files(assets_dir, output_dir):
+    shutil.copy(os.path.join(assets_dir, 'toc.html'), output_dir)
+    shutil.copy(os.path.join(assets_dir, 'list.min.js'), output_dir)
+
+
+def generate_values_js(fp, doc_items):
+    lst = list(doc_items)
+    lst.sort(key=lambda x: x['name'])
+
+    fp.write('values = ')
+    json.dump(lst, fp, indent=4)
+    fp.write(';')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.description = DESCRIPTION
@@ -39,17 +53,10 @@ def main():
 
     args = parser.parse_args()
 
-    ASSETS_DIR = os.path.dirname(__file__)
-    shutil.copy(os.path.join(ASSETS_DIR, 'toc.html'), args.output_dir)
-    shutil.copy(os.path.join(ASSETS_DIR, 'list.min.js'), args.output_dir)
-
-    lst = list(walk_doc(args.reference_dir))
-    lst.sort(key=lambda x: x['name'])
-
-    with open(os.path.join(args.output_dir, 'values.js'), 'wt') as f:
-        f.write('values = ')
-        json.dump(lst, f, indent=4)
-        f.write(';')
+    doc_items = find_doc_items(args.reference_dir)
+    copy_static_files(os.path.dirname(__file__), args.output_dir)
+    with open(os.path.join(args.output_dir, 'values.js'), 'wt') as fp:
+        generate_values_js(fp, doc_items)
 
     return 0
 
